@@ -1,0 +1,659 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>QRLink Dark</title>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@3.30.0/dist/tabler-icons.min.css">
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --bg:#0d0d0d;
+  --bg2:#141414;
+  --bg3:#1c1c1c;
+  --bg4:#242424;
+  --text:#f0f0f0;
+  --text2:#a0a0a0;
+  --text3:#5a5a5a;
+  --border:#2a2a2a;
+  --border2:#383838;
+  --accent:#4ade80;
+  --accent-dim:#16a34a;
+  --accent-bg:rgba(74,222,128,0.08);
+  --danger:#f87171;
+  --danger-bg:rgba(248,113,113,0.1);
+  --radius:12px;
+  --radius-sm:8px;
+  --radius-xs:6px;
+}
+body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;background:var(--bg);color:var(--text);min-height:100vh;line-height:1.6}
+
+/* ── 헤더 ── */
+.header{
+  display:flex;align-items:center;justify-content:space-between;
+  padding:1rem 2rem;border-bottom:0.5px solid var(--border);
+  background:var(--bg2);position:sticky;top:0;z-index:10;
+}
+.logo{display:flex;align-items:center;gap:10px}
+.logo-icon{
+  width:34px;height:34px;border-radius:9px;
+  background:var(--accent);display:flex;align-items:center;justify-content:center;
+  color:#0d1a0d;font-size:17px;font-weight:700;flex-shrink:0;
+}
+.logo-text{font-size:15px;font-weight:600;letter-spacing:-0.3px}
+.logo-sub{font-size:11px;color:var(--text3);margin-top:1px}
+.header-badge{
+  font-size:11px;padding:3px 10px;border-radius:999px;
+  background:var(--accent-bg);color:var(--accent);border:0.5px solid rgba(74,222,128,0.2);
+}
+
+/* ── 메인 레이아웃 ── */
+.app{max-width:1120px;margin:0 auto;padding:2rem}
+.layout{display:grid;grid-template-columns:380px 1fr;gap:1.5rem;align-items:start}
+@media(max-width:800px){.layout{grid-template-columns:1fr}}
+
+/* ── 패널 ── */
+.panel{background:var(--bg2);border:0.5px solid var(--border);border-radius:var(--radius);overflow:hidden}
+.panel-header{
+  padding:14px 18px;border-bottom:0.5px solid var(--border);
+  font-size:12px;font-weight:500;color:var(--text3);letter-spacing:0.05em;text-transform:uppercase;
+  display:flex;align-items:center;gap:8px;
+}
+.panel-body{padding:18px}
+
+/* ── 폼 요소 ── */
+.field{margin-bottom:16px}
+.field:last-child{margin-bottom:0}
+.label{font-size:12px;color:var(--text2);margin-bottom:6px;display:flex;align-items:center;justify-content:space-between}
+.label-val{font-weight:500;color:var(--text);font-family:monospace;font-size:11px}
+
+.input-wrap{position:relative}
+.url-status{
+  position:absolute;left:12px;top:50%;transform:translateY(-50%);
+  width:7px;height:7px;border-radius:50%;background:var(--text3);transition:background .2s;
+}
+.url-status.valid{background:var(--accent)}
+.url-status.invalid{background:var(--danger)}
+
+input[type=text]{
+  width:100%;background:var(--bg3);border:0.5px solid var(--border2);border-radius:var(--radius-sm);
+  color:var(--text);font-size:14px;padding:9px 12px 9px 28px;outline:none;transition:border .2s;
+}
+input[type=text]:focus{border-color:var(--accent)}
+input[type=text].no-icon{padding-left:12px}
+
+input[type=color]{
+  width:100%;height:40px;border-radius:var(--radius-sm);border:0.5px solid var(--border2);
+  background:var(--bg3);cursor:pointer;padding:3px;
+}
+input[type=range]{
+  width:100%;accent-color:var(--accent);height:4px;cursor:pointer;
+}
+input[type=text].slug-input{padding-left:12px;font-family:monospace;font-size:13px}
+
+/* ── 색상 행 ── */
+.color-row{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+
+/* ── 오류보정 버튼 ── */
+.ec-group{display:grid;grid-template-columns:repeat(4,1fr);gap:6px}
+.ec-btn{
+  padding:7px 0;border:0.5px solid var(--border2);border-radius:var(--radius-xs);
+  background:var(--bg3);color:var(--text2);font-size:12px;font-weight:500;cursor:pointer;
+  transition:all .15s;text-align:center;
+}
+.ec-btn:hover{border-color:var(--accent);color:var(--accent)}
+.ec-btn.active{background:var(--accent);color:#0d1a0d;border-color:var(--accent);font-weight:600}
+
+/* ── 버튼 ── */
+.btn{
+  display:inline-flex;align-items:center;justify-content:center;gap:7px;
+  padding:9px 16px;border-radius:var(--radius-sm);font-size:13px;font-weight:500;
+  cursor:pointer;transition:all .15s;border:0.5px solid transparent;white-space:nowrap;
+}
+.btn-primary{background:var(--accent);color:#0d1a0d;border-color:var(--accent)}
+.btn-primary:hover{background:#86efac}
+.btn-primary:active{transform:scale(.97)}
+.btn-ghost{background:var(--bg3);color:var(--text2);border-color:var(--border2)}
+.btn-ghost:hover{color:var(--text);border-color:var(--border2)}
+.btn-ghost:active{transform:scale(.97)}
+.btn-danger-ghost{background:transparent;color:var(--text3);border-color:var(--border)}
+.btn-danger-ghost:hover{color:var(--danger);border-color:var(--danger)}
+.btn-full{width:100%}
+.btn-sm{padding:6px 12px;font-size:12px}
+
+.dl-row{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:8px}
+.action-row{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+
+/* ── 단축링크 영역 ── */
+.short-box{
+  background:var(--bg3);border:0.5px solid var(--border);border-radius:var(--radius-sm);
+  padding:12px 14px;display:flex;align-items:center;justify-content:space-between;gap:10px;
+  margin-bottom:10px;
+}
+.short-url{font-size:13px;font-family:monospace;color:var(--accent);word-break:break-all;flex:1}
+.short-url.placeholder{color:var(--text3)}
+
+.divider{height:0.5px;background:var(--border);margin:16px 0}
+
+/* ── 미리보기 패널 ── */
+.preview-panel{background:var(--bg2);border:0.5px solid var(--border);border-radius:var(--radius)}
+.preview-tabs{
+  display:flex;border-bottom:0.5px solid var(--border);padding:0 18px;
+}
+.preview-tab{
+  padding:12px 0;font-size:12px;color:var(--text3);cursor:pointer;
+  border-bottom:2px solid transparent;margin-right:20px;transition:all .15s;
+}
+.preview-tab.active{color:var(--accent);border-bottom-color:var(--accent)}
+
+.preview-body{
+  padding:2rem;display:flex;flex-direction:column;align-items:center;justify-content:center;
+  min-height:420px;
+}
+
+.qr-wrap{
+  background:#fff;border-radius:var(--radius);padding:16px;
+  display:inline-flex;align-items:center;justify-content:center;
+  box-shadow:0 0 0 1px var(--border);
+}
+.qr-wrap canvas{display:block}
+.qr-placeholder{
+  width:280px;height:280px;border-radius:var(--radius-sm);
+  background:var(--bg3);border:0.5px dashed var(--border2);
+  display:flex;flex-direction:column;align-items:center;justify-content:center;gap:10px;
+  color:var(--text3);font-size:13px;
+}
+
+.preview-meta{
+  margin-top:14px;font-size:12px;color:var(--text3);text-align:center;
+}
+
+/* ── 토스트 ── */
+#toast{
+  position:fixed;bottom:24px;right:24px;z-index:100;
+  background:var(--bg4);border:0.5px solid var(--border2);border-radius:var(--radius-sm);
+  padding:10px 16px;font-size:13px;color:var(--text);
+  display:flex;align-items:center;gap:8px;
+  opacity:0;transform:translateY(8px);transition:all .2s;pointer-events:none;
+}
+#toast.show{opacity:1;transform:translateY(0)}
+#toast .toast-icon{color:var(--accent);font-size:16px}
+
+/* ── 링크 히스토리 ── */
+.history-list{display:flex;flex-direction:column;gap:6px}
+.history-item{
+  background:var(--bg3);border:0.5px solid var(--border);border-radius:var(--radius-xs);
+  padding:10px 12px;display:flex;align-items:center;gap:10px;
+}
+.history-orig{font-size:11px;color:var(--text3);flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.history-short{font-size:12px;font-family:monospace;color:var(--accent);cursor:pointer}
+.history-short:hover{text-decoration:underline}
+.history-copy{
+  font-size:11px;padding:3px 8px;border-radius:4px;border:0.5px solid var(--border2);
+  background:transparent;color:var(--text3);cursor:pointer;
+}
+.history-copy:hover{color:var(--accent);border-color:var(--accent)}
+
+.empty-state{text-align:center;padding:2rem;color:var(--text3);font-size:13px}
+.empty-state i{font-size:28px;display:block;margin-bottom:8px}
+
+/* ── 커스텀 slug ── */
+.slug-prefix{font-size:12px;color:var(--text3);font-family:monospace}
+.slug-row{display:flex;align-items:center;gap:6px;background:var(--bg3);border:0.5px solid var(--border2);border-radius:var(--radius-sm);padding:0 10px}
+.slug-row:focus-within{border-color:var(--accent)}
+.slug-row input{border:none;background:transparent;flex:1;padding:9px 0;font-size:13px;font-family:monospace;color:var(--text);outline:none}
+.slug-check{font-size:14px;flex-shrink:0}
+.slug-check.ok{color:var(--accent)}
+.slug-check.err{color:var(--danger)}
+</style>
+</head>
+<body>
+
+<!-- 헤더 -->
+<header class="header">
+  <div class="logo">
+    <div class="logo-icon">Q</div>
+    <div>
+      <div class="logo-text">QRLink Dark</div>
+      <div class="logo-sub">QR코드 &amp; 단축링크 생성기</div>
+    </div>
+  </div>
+  <span class="header-badge"><i class="ti ti-moon" style="font-size:11px"></i> Dark Edition</span>
+</header>
+
+<!-- 메인 -->
+<main class="app">
+  <div class="layout">
+
+    <!-- 좌측 설정 패널 -->
+    <div style="display:flex;flex-direction:column;gap:1rem">
+
+      <!-- URL 입력 -->
+      <div class="panel">
+        <div class="panel-header"><i class="ti ti-link" aria-hidden="true"></i> URL 입력</div>
+        <div class="panel-body">
+          <div class="field">
+            <div class="label">사이트 주소</div>
+            <div class="input-wrap">
+              <span class="url-status" id="urlStatus"></span>
+              <input type="text" id="urlInput" placeholder="example.com 또는 https://example.com" autocomplete="off" spellcheck="false">
+            </div>
+            <div id="urlHint" style="font-size:11px;color:var(--text3);margin-top:5px;font-family:monospace;min-height:16px"></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- 단축링크 -->
+      <div class="panel">
+        <div class="panel-header"><i class="ti ti-scissors" aria-hidden="true"></i> 단축링크</div>
+        <div class="panel-body">
+          <div class="field">
+            <div class="label">커스텀 슬러그 <span style="color:var(--text3);font-size:10px;font-weight:400">비워두면 자동생성</span></div>
+            <div class="slug-row">
+              <span class="slug-prefix">qrl.ink/</span>
+              <input type="text" id="slugInput" placeholder="my-link" maxlength="30" autocomplete="off" spellcheck="false">
+              <span class="slug-check" id="slugCheck"></span>
+            </div>
+          </div>
+          <div class="short-box" id="shortBox">
+            <span class="short-url placeholder" id="shortUrl">단축 링크가 여기에 표시됩니다</span>
+          </div>
+          <div style="display:flex;gap:8px">
+            <button class="btn btn-primary" style="flex:1" onclick="generateShortLink()">
+              <i class="ti ti-link" aria-hidden="true"></i> 생성
+            </button>
+            <button class="btn btn-ghost" id="copyShortBtn" onclick="copyShortLink()" disabled>
+              <i class="ti ti-copy" aria-hidden="true"></i> 복사
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <!-- QR 스타일 설정 -->
+      <div class="panel">
+        <div class="panel-header"><i class="ti ti-palette" aria-hidden="true"></i> QR 스타일</div>
+        <div class="panel-body">
+          <div class="field">
+            <div class="color-row">
+              <div>
+                <div class="label">전경색</div>
+                <input type="color" id="fgColor" value="#111827">
+              </div>
+              <div>
+                <div class="label">배경색</div>
+                <input type="color" id="bgColor" value="#ffffff">
+              </div>
+            </div>
+          </div>
+
+          <div class="field">
+            <div class="label">크기 <span class="label-val" id="sizeVal">720px</span></div>
+            <input type="range" id="sizeRange" min="256" max="1024" step="32" value="720">
+          </div>
+
+          <div class="field">
+            <div class="label">여백 <span class="label-val" id="marginVal">3</span></div>
+            <input type="range" id="marginRange" min="0" max="10" step="1" value="3">
+          </div>
+
+          <div class="field">
+            <div class="label" style="margin-bottom:8px">오류 보정 수준</div>
+            <div class="ec-group">
+              <button class="ec-btn" data-ec="L" onclick="setEC('L')">L<div style="font-size:9px;color:inherit;opacity:.7;margin-top:1px">7%</div></button>
+              <button class="ec-btn" data-ec="M" onclick="setEC('M')">M<div style="font-size:9px;color:inherit;opacity:.7;margin-top:1px">15%</div></button>
+              <button class="ec-btn" data-ec="Q" onclick="setEC('Q')">Q<div style="font-size:9px;color:inherit;opacity:.7;margin-top:1px">25%</div></button>
+              <button class="ec-btn active" data-ec="H" onclick="setEC('H')">H<div style="font-size:9px;color:inherit;opacity:.7;margin-top:1px">30%</div></button>
+            </div>
+          </div>
+
+          <div class="divider"></div>
+
+          <div class="dl-row">
+            <button class="btn btn-ghost" onclick="downloadPNG()"><i class="ti ti-download" aria-hidden="true"></i> PNG</button>
+            <button class="btn btn-ghost" onclick="downloadSVG()"><i class="ti ti-download" aria-hidden="true"></i> SVG</button>
+          </div>
+          <div class="action-row">
+            <button class="btn btn-ghost" onclick="copySVG()"><i class="ti ti-clipboard" aria-hidden="true"></i> SVG 복사</button>
+            <button class="btn btn-danger-ghost" onclick="resetAll()"><i class="ti ti-refresh" aria-hidden="true"></i> 초기화</button>
+          </div>
+        </div>
+      </div>
+
+    </div>
+
+    <!-- 우측 패널 -->
+    <div style="display:flex;flex-direction:column;gap:1rem">
+
+      <!-- QR 미리보기 -->
+      <div class="preview-panel">
+        <div class="preview-tabs">
+          <div class="preview-tab active" onclick="switchTab('preview',this)">미리보기</div>
+          <div class="preview-tab" onclick="switchTab('history',this)">링크 기록</div>
+        </div>
+
+        <!-- 미리보기 탭 -->
+        <div id="tab-preview" class="preview-body">
+          <div class="qr-wrap" id="qrWrap" style="display:none">
+            <canvas id="qrCanvas"></canvas>
+          </div>
+          <div class="qr-placeholder" id="qrPlaceholder">
+            <i class="ti ti-qrcode" style="font-size:40px"></i>
+            <span>URL을 입력하면 QR이 생성됩니다</span>
+          </div>
+          <div class="preview-meta" id="previewMeta"></div>
+        </div>
+
+        <!-- 기록 탭 -->
+        <div id="tab-history" style="display:none;padding:18px">
+          <div id="historyList" class="history-list">
+            <div class="empty-state"><i class="ti ti-history"></i>생성된 단축 링크가 없습니다</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- 사용 안내 -->
+      <div class="panel">
+        <div class="panel-header"><i class="ti ti-info-circle" aria-hidden="true"></i> 사용 안내</div>
+        <div class="panel-body" style="display:grid;grid-template-columns:1fr 1fr;gap:12px">
+          <div style="background:var(--bg3);border-radius:var(--radius-sm);padding:12px">
+            <div style="font-size:11px;color:var(--text3);margin-bottom:4px;text-transform:uppercase;letter-spacing:.05em">PNG</div>
+            <div style="font-size:12px;color:var(--text2)">발표자료·문서·인쇄물에 적합. 설정한 픽셀 크기로 저장됩니다.</div>
+          </div>
+          <div style="background:var(--bg3);border-radius:var(--radius-sm);padding:12px">
+            <div style="font-size:11px;color:var(--text3);margin-bottom:4px;text-transform:uppercase;letter-spacing:.05em">SVG</div>
+            <div style="font-size:12px;color:var(--text2)">웹사이트·로고·확대 인쇄물에 적합. 무한 확대해도 선명합니다.</div>
+          </div>
+          <div style="background:var(--bg3);border-radius:var(--radius-sm);padding:12px">
+            <div style="font-size:11px;color:var(--text3);margin-bottom:4px;text-transform:uppercase;letter-spacing:.05em">오류 보정</div>
+            <div style="font-size:12px;color:var(--text2)">H(30%) 권장. QR 일부 가려져도 인식 가능. 로고 삽입 시 필수.</div>
+          </div>
+          <div style="background:var(--bg3);border-radius:var(--radius-sm);padding:12px">
+            <div style="font-size:11px;color:var(--text3);margin-bottom:4px;text-transform:uppercase;letter-spacing:.05em">단축링크</div>
+            <div style="font-size:12px;color:var(--text2)">긴 URL을 짧게 줄여 QR 데이터량을 낮추고 인식률을 높입니다.</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</main>
+
+<!-- 토스트 -->
+<div id="toast"><i class="ti toast-icon"></i><span id="toastMsg"></span></div>
+
+<!-- QRCode.js -->
+<script src="https://cdn.jsdelivr.net/npm/qrcode@1.5.3/build/qrcode.min.js"></script>
+<script>
+/* ── 상태 ── */
+let state = {
+  url: '',
+  fg: '#111827',
+  bg: '#ffffff',
+  size: 720,
+  margin: 3,
+  ec: 'H',
+  shortUrl: null,
+  shortLinks: [],
+  slugConflicts: new Set(),
+  debounceTimer: null,
+  currentTab: 'preview',
+};
+
+const usedSlugs = new Set();
+
+/* ── 유틸 ── */
+function randomSlug(len=6){
+  const chars='abcdefghijklmnopqrstuvwxyz0123456789';
+  return Array.from({length:len},()=>chars[Math.floor(Math.random()*chars.length)]).join('');
+}
+
+function isValidUrl(s){
+  try{new URL(s.startsWith('http')?s:'https://'+s);return true}catch{return false}
+}
+
+function normalizeUrl(s){
+  if(!s)return '';
+  return s.startsWith('http')?s:'https://'+s;
+}
+
+function showToast(msg, icon='ti-check'){
+  const t=document.getElementById('toast');
+  t.querySelector('.toast-icon').className='ti '+icon+' toast-icon';
+  document.getElementById('toastMsg').textContent=msg;
+  t.classList.add('show');
+  setTimeout(()=>t.classList.remove('show'),2200);
+}
+
+/* ── URL 입력 처리 ── */
+const urlInput=document.getElementById('urlInput');
+const urlStatus=document.getElementById('urlStatus');
+const urlHint=document.getElementById('urlHint');
+
+urlInput.addEventListener('input',()=>{
+  clearTimeout(state.debounceTimer);
+  state.debounceTimer=setTimeout(()=>onUrlChange(urlInput.value.trim()),300);
+});
+
+function onUrlChange(val){
+  state.url=val;
+  if(!val){
+    urlStatus.className='url-status';
+    urlHint.textContent='';
+    clearQR();return;
+  }
+  const norm=normalizeUrl(val);
+  if(isValidUrl(norm)){
+    urlStatus.className='url-status valid';
+    urlHint.textContent=norm;
+    urlHint.style.color='var(--accent)';
+    renderQR(norm);
+  } else {
+    urlStatus.className='url-status invalid';
+    urlHint.textContent='올바른 URL 형식이 아닙니다';
+    urlHint.style.color='var(--danger)';
+    clearQR();
+  }
+}
+
+/* ── QR 렌더링 ── */
+function getECLevel(){
+  return {L:QRCode.CorrectLevel?.L??0,M:QRCode.CorrectLevel?.M??0,Q:QRCode.CorrectLevel?.Q??0,H:QRCode.CorrectLevel?.H??0}[state.ec];
+}
+
+let currentSvgStr='';
+
+async function renderQR(url){
+  const canvas=document.getElementById('qrCanvas');
+  const qrWrap=document.getElementById('qrWrap');
+  const ph=document.getElementById('qrPlaceholder');
+  const meta=document.getElementById('previewMeta');
+
+  try{
+    await QRCode.toCanvas(canvas, url, {
+      width: Math.min(state.size, 480),
+      margin: state.margin,
+      color:{dark:state.fg, light:state.bg},
+      errorCorrectionLevel: state.ec,
+    });
+    currentSvgStr = await QRCode.toString(url,{
+      type:'svg',
+      width:state.size,
+      margin:state.margin,
+      color:{dark:state.fg,light:state.bg},
+      errorCorrectionLevel:state.ec,
+    });
+    qrWrap.style.display='inline-flex';
+    ph.style.display='none';
+    meta.textContent=`${state.size}×${state.size}px · 오류 보정 ${state.ec} · ${state.ec==='H'?'30%':state.ec==='Q'?'25%':state.ec==='M'?'15%':'7%'} 복원`;
+  } catch(e){
+    console.warn('QR error',e);
+  }
+}
+
+function clearQR(){
+  document.getElementById('qrWrap').style.display='none';
+  document.getElementById('qrPlaceholder').style.display='flex';
+  document.getElementById('previewMeta').textContent='';
+  currentSvgStr='';
+}
+
+/* ── 스타일 컨트롤 ── */
+document.getElementById('fgColor').addEventListener('input',e=>{
+  state.fg=e.target.value;
+  if(state.url&&isValidUrl(normalizeUrl(state.url)))renderQR(normalizeUrl(state.url));
+});
+document.getElementById('bgColor').addEventListener('input',e=>{
+  state.bg=e.target.value;
+  if(state.url&&isValidUrl(normalizeUrl(state.url)))renderQR(normalizeUrl(state.url));
+});
+
+const sizeRange=document.getElementById('sizeRange');
+const sizeVal=document.getElementById('sizeVal');
+sizeRange.addEventListener('input',e=>{
+  state.size=+e.target.value;
+  sizeVal.textContent=state.size+'px';
+  if(state.url&&isValidUrl(normalizeUrl(state.url)))renderQR(normalizeUrl(state.url));
+});
+
+const marginRange=document.getElementById('marginRange');
+const marginVal=document.getElementById('marginVal');
+marginRange.addEventListener('input',e=>{
+  state.margin=+e.target.value;
+  marginVal.textContent=state.margin;
+  if(state.url&&isValidUrl(normalizeUrl(state.url)))renderQR(normalizeUrl(state.url));
+});
+
+function setEC(level){
+  state.ec=level;
+  document.querySelectorAll('.ec-btn').forEach(b=>b.classList.toggle('active',b.dataset.ec===level));
+  if(state.url&&isValidUrl(normalizeUrl(state.url)))renderQR(normalizeUrl(state.url));
+}
+
+/* ── 단축링크 ── */
+const slugInput=document.getElementById('slugInput');
+const slugCheck=document.getElementById('slugCheck');
+
+slugInput.addEventListener('input',()=>{
+  const v=slugInput.value.trim();
+  if(!v){slugCheck.textContent='';slugCheck.className='slug-check';return;}
+  if(usedSlugs.has(v)){
+    slugCheck.textContent='✗';slugCheck.className='slug-check err';
+  } else {
+    slugCheck.textContent='✓';slugCheck.className='slug-check ok';
+  }
+});
+
+function generateShortLink(){
+  const url=normalizeUrl(state.url);
+  if(!state.url||!isValidUrl(url)){showToast('유효한 URL을 먼저 입력하세요','ti-alert-circle');return;}
+  let slug=slugInput.value.trim();
+  if(!slug){slug=randomSlug();}
+  if(usedSlugs.has(slug)){showToast('이미 사용된 슬러그입니다','ti-alert-circle');return;}
+  usedSlugs.add(slug);
+  const short='qrl.ink/'+slug;
+  state.shortUrl=short;
+  state.shortLinks.unshift({orig:url,short,slug,date:new Date()});
+
+  document.getElementById('shortUrl').textContent=short;
+  document.getElementById('shortUrl').classList.remove('placeholder');
+  document.getElementById('copyShortBtn').disabled=false;
+  slugInput.value='';
+  slugCheck.textContent='';
+  renderHistory();
+  showToast('단축링크가 생성되었습니다','ti-link');
+}
+
+function copyShortLink(){
+  if(!state.shortUrl)return;
+  navigator.clipboard.writeText('https://'+state.shortUrl).then(()=>showToast('클립보드에 복사되었습니다','ti-check'));
+}
+
+function renderHistory(){
+  const list=document.getElementById('historyList');
+  if(!state.shortLinks.length){
+    list.innerHTML='<div class="empty-state"><i class="ti ti-history"></i>생성된 단축 링크가 없습니다</div>';return;
+  }
+  list.innerHTML=state.shortLinks.map((item,i)=>`
+    <div class="history-item">
+      <div style="flex:1;min-width:0">
+        <div class="history-orig" title="${item.orig}">${item.orig}</div>
+        <div class="history-short" onclick="loadShortItem(${i})">${item.short}</div>
+      </div>
+      <button class="history-copy" onclick="copyItem('${item.short}')">복사</button>
+    </div>
+  `).join('');
+}
+
+function loadShortItem(i){
+  const item=state.shortLinks[i];
+  urlInput.value=item.orig;
+  onUrlChange(item.orig);
+  switchTab('preview',document.querySelector('.preview-tab'));
+  document.querySelectorAll('.preview-tab')[0].classList.add('active');
+  document.querySelectorAll('.preview-tab')[1].classList.remove('active');
+}
+
+function copyItem(short){
+  navigator.clipboard.writeText('https://'+short).then(()=>showToast('복사되었습니다','ti-check'));
+}
+
+/* ── 탭 전환 ── */
+function switchTab(tab, el){
+  state.currentTab=tab;
+  document.querySelectorAll('.preview-tab').forEach(t=>t.classList.remove('active'));
+  el.classList.add('active');
+  document.getElementById('tab-preview').style.display=tab==='preview'?'flex':'none';
+  document.getElementById('tab-history').style.display=tab==='history'?'block':'none';
+  if(tab==='history')renderHistory();
+}
+
+/* ── 다운로드 ── */
+function downloadPNG(){
+  const canvas=document.getElementById('qrCanvas');
+  if(!state.url||!isValidUrl(normalizeUrl(state.url))){showToast('QR 코드를 먼저 생성하세요','ti-alert-circle');return;}
+  const full=document.createElement('canvas');
+  full.width=state.size; full.height=state.size;
+  const ctx=full.getContext('2d');
+  ctx.drawImage(canvas,0,0,state.size,state.size);
+  const link=document.createElement('a');
+  link.download='qrlink-'+Date.now()+'.png';
+  link.href=full.toDataURL('image/png');
+  link.click();
+  showToast('PNG 다운로드 완료','ti-download');
+}
+
+function downloadSVG(){
+  if(!currentSvgStr){showToast('QR 코드를 먼저 생성하세요','ti-alert-circle');return;}
+  const blob=new Blob([currentSvgStr],{type:'image/svg+xml'});
+  const link=document.createElement('a');
+  link.download='qrlink-'+Date.now()+'.svg';
+  link.href=URL.createObjectURL(blob);
+  link.click();
+  showToast('SVG 다운로드 완료','ti-download');
+}
+
+function copySVG(){
+  if(!currentSvgStr){showToast('QR 코드를 먼저 생성하세요','ti-alert-circle');return;}
+  navigator.clipboard.writeText(currentSvgStr).then(()=>showToast('SVG 코드가 복사되었습니다','ti-clipboard'));
+}
+
+/* ── 초기화 ── */
+function resetAll(){
+  urlInput.value='';slugInput.value='';
+  document.getElementById('fgColor').value='#111827';
+  document.getElementById('bgColor').value='#ffffff';
+  sizeRange.value=720; sizeVal.textContent='720px';
+  marginRange.value=3; marginVal.textContent='3';
+  setEC('H');
+  state.url=''; state.fg='#111827'; state.bg='#ffffff';
+  state.size=720; state.margin=3;
+  urlStatus.className='url-status'; urlHint.textContent='';
+  document.getElementById('shortUrl').textContent='단축 링크가 여기에 표시됩니다';
+  document.getElementById('shortUrl').classList.add('placeholder');
+  document.getElementById('copyShortBtn').disabled=true;
+  state.shortUrl=null; slugCheck.textContent=''; slugCheck.className='slug-check';
+  clearQR();
+  showToast('초기화되었습니다','ti-refresh');
+}
+</script>
+</body>
+</html>
